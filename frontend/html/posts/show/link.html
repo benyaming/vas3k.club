@@ -23,7 +23,7 @@
                 <div class="post-title">
                     {% link_icon post %}
 
-                    &rarr; <a href="{{ post.url }}" target="_blank" class="p-name">{{ post.title | rutypography }}</a>
+                    &rarr; <a href="{{ post.url }}" target="_blank" class="p-name" rel="noopener">{{ post.title | rutypography }}</a>
 
                     <span class="post-is-public">
                         {% if post.is_public %}
@@ -89,4 +89,7 @@
             {% link_summary post %}
         {% endif %}
     </section>
+    {% if linked_posts %}
+        {% include "posts/widgets/linked_posts.html" %}
+    {% endif %}
 {% endblock %}

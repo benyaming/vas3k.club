@@ -13,11 +13,7 @@
                 {% endif %}
             </div>
             <div class="post-title">
-                {% if post.type == "intro" %}
-                    {{ post.prefix}}: {{ post.author.full_name | rutypography }}
-                {% else %}
-                    {{ post.title | rutypography }}
-                {% endif %}
+                {{ post.title | rutypography }}
             </div>
             <span class="post-is-public">
                 {% if post.is_public %}
@@ -63,11 +59,9 @@
                     {% endif %}
                 </div>
 
-                {% if post.type != "intro" %}
-                    <div class="post-author">
-                        {% include "users/widgets/tiny.html" with user=post.author %}
-                    </div>
-                {% endif %}
+                <div class="post-author">
+                    {% include "users/widgets/tiny.html" with user=post.author %}
+                </div>
 
                 {% if post.label %}
                     <div class="post-label">
@@ -101,5 +95,8 @@
             {% include "users/widgets/card.html" with user=post.author %}
         </footer>
     </article>
+    {% if linked_posts %}
+        {% include "posts/widgets/linked_posts.html" %}
+    {% endif %}
 </section>
 {% endblock %}

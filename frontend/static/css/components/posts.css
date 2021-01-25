@@ -262,14 +262,14 @@
     .text-body h2 {
         font-size: 190%;
         margin-top: 130px;
-        margin-bottom: 30px;
+        margin-bottom: 50px;
         text-align: left;
     }
 
     .text-body h3 {
         font-size: 150%;
         margin-top: 100px;
-        margin-bottom: 10px;
+        margin-bottom: 30px;
         text-align: left;
     }
 
@@ -780,3 +780,36 @@
                 width: 100%;
             }
     }
+
+.linked-posts {
+    max-width: var(--normal-content-width);
+    margin: 50px auto 0;
+    padding-bottom: 0;
+    padding-right: 10px;
+}
+
+    .linked-posts-title {
+        display: block;
+        font-size: 180%;
+        width: 100%;
+        font-weight: 500;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .linked-posts-scroll {
+        display: block;
+        overflow-x: visible;
+        overflow-y: auto;
+        width: 100%;
+        max-height: 520px;
+        padding: 30px 30px 10px 5px;
+        box-sizing: border-box;
+        font-size: 90%;
+    }
+
+        @media only screen and (max-width : 570px) {
+            .linked-posts-scroll {
+                padding-right: 10px;
+            }
+        }

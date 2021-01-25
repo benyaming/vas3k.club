@@ -5,13 +5,13 @@ from auth.helpers import check_user_permissions, auth_required
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
 from common.request import ajax_request
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm
+from posts.models.linked import LinkedPost
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
 from posts.models.views import PostView
 from posts.models.votes import PostVote
 from posts.renderers import render_post
 from search.models import SearchIndex
-from users.models.user import User
 
 
 def show_post(request, post_type, post_slug):
@@ -47,8 +47,18 @@ def show_post(request, post_type, post_slug):
             post=post,
         )
 
+    # find linked posts and sort them by upvotes
+    linked_posts = sorted({
+        link.post_to if link.post_to != post else link.post_from
+        for link in LinkedPost.links_for_post(post)[:50]
+    }, key=lambda p: p.upvotes, reverse=True)
+
+    # force cleanup deleted/hidden posts from linked
+    linked_posts = [p for p in linked_posts if p.is_visible]
+
     return render_post(request, post, {
-        "post_last_view_at": last_view_at
+        "post_last_view_at": last_view_at,
+        "linked_posts": linked_posts,
     })
 
 
@@ -70,6 +80,7 @@ def edit_post(request, post_slug):
             post.save()
 
             SearchIndex.update_post_index(post)
+            LinkedPost.create_links_from_text(post, post.text)
 
             if post.is_visible:
                 return redirect("show_post", post.type, post.slug)
@@ -109,9 +120,9 @@ def upvote_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
 
     post_vote, is_vote_created = PostVote.upvote(
-        request=request,
         user=request.me,
         post=post,
+        request=request,
     )
 
     return {

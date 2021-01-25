@@ -19,17 +19,12 @@ class PostForm(forms.ModelForm):
     )
     is_public = forms.BooleanField(
         label="Виден ли в большой интернет?",
-        initial=True,
+        initial=False,
         required=False
     )
     is_visible = forms.BooleanField(
         label="Виден ли пост вообще?",
         initial=False,
-        required=False
-    )
-    is_visible_on_main_page = forms.BooleanField(
-        label="Видел ли пост на главной странице?",
-        initial=True,
         required=False
     )
 
@@ -61,7 +56,7 @@ class PostTextForm(PostForm):
             attrs={
                 "maxlength": 500000,
                 "class": "markdown-editor-full",
-                "placeholder": "Дорогой Мартин Алексеевич..."
+                "placeholder": "Дорогой Мартин Алексеевич…"
             }
         ),
     )
@@ -87,15 +82,16 @@ class PostLinkForm(PostForm):
         label="TL;DR",
         required=True,
         max_length=50000,
-        min_length=500,
+        min_length=350,
         widget=forms.Textarea(
             attrs={
-                "minlength": 400,
+                "minlength": 350,
                 "maxlength": 50000,
                 "class": "markdown-editor-full",
                 "data-listen": "keyup",
                 "placeholder": "Напишите TL;DR чтобы сэкономить другим время."
-                               "\n\nКоротко расскажите о чем ссылка и почему все должны её прочитать. ",
+                               "\n\nКоротко расскажите о чем ссылка, перечислите основные моменты, "
+                               "которые вас зацепили, и почему каждый из нас должен пойти её прочитать.",
             }
         ),
     )

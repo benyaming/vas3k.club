@@ -2,7 +2,7 @@
 {% load text_filters %}
 <article class="block feed-post h-entry {% css_classes post %}">
     <div class="feed-post-author">
-        <a href="{% url "profile" post.author.slug %}" class="avatar" style="background-image: url('{{ post.author.get_avatar }}');"></a>
+        <a href="{% url "profile" post.author.slug %}" class="avatar"><img src="{{ post.author.get_avatar }}" alt="Аватар {{ post.author.full_name }}" loading="lazy" /></a>
     </div>
 
     <div class="feed-post-votes">
@@ -22,9 +22,7 @@
         <div class="feed-post-title">
             {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
 
-            {% link_icon post %}
-
-            &rarr; <a href="{{ post.url }}" target="_blank" class="p-name">{{ post.title | rutypography }}</a>
+            {% link_icon post %} &rarr; <a href="{% url "show_post" post.type post.slug %}" class="p-name">{{ post.title | rutypography }}</a>
 
             {% if post.label %}
                 {% include "posts/widgets/label.html" with label=post.label %}
@@ -49,7 +47,7 @@
         {% endif %}
 
 
-        {% include "posts/items/bookmark_controls.html" %}
+        {% include "posts/widgets/bookmark_controls.html" %}
 
 
     </div>

@@ -153,6 +153,11 @@
                 font-weight: 500;
             }
 
+            .user-small .user-name-post {
+                font-weight: 500;
+                text-decoration: underline;
+            }
+
             .user-small .user-position {
                 opacity: 0.7;
             }
@@ -184,9 +189,13 @@
         display: inline-block;
         width: 1.7em;
         height: 1.7em;
-        background-size: cover;
-        background-position: center center;
         vertical-align: middle;
+    }
+
+    .hat-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .hat-title {
@@ -411,6 +420,12 @@
             margin: 0 auto;
         }
 
+        .profile-user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .profile-user-name {
             display: block;
             font-size: 170%;
@@ -538,6 +553,16 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
+        .profile-intro-footer {
+            padding-top: 20px;
+            text-align: center;
+        }
+
+            .profile-intro-footer a {
+                text-decoration: none;
+                font-weight: 500;
+            }
 
     .profile-intro-edit {
         position: absolute;
@@ -1195,6 +1220,11 @@
             font-size: 17px;
         }
 
+            .user-edit-digest-item input {
+                visibility: hidden;
+                position: absolute;
+            }
+
             .user-edit-digest-label {
                 display: block;
                 position: relative;
@@ -1211,6 +1241,15 @@
                 text-align: center;
             }
 
+            .user-edit-digest-item input:checked + .user-edit-digest-label {
+                background-color: var(--opposite-block-bg-color);
+                color: var(--opposite-text-color);
+            }
+
+            .user-edit-digest-item input:checked + .user-edit-digest-label a {
+                color: var(--opposite-text-color);
+            }
+
             .user-edit-digest-label:hover {
                 box-shadow: 2px 2px 8px 0 rgba(69, 70, 70, 0.12);
             }
@@ -1219,16 +1258,6 @@
                     display: block;
                     font-size: 60px;
                     padding-top: 20px;
-                }
-
-                .user-edit-digest-label input {
-                    display: inline-block;
-                    width: auto;
-                    position: absolute;
-                    padding-bottom: 10px;
-                    bottom: 40px;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
                 }
 
                 .user-edit-digest-name {
@@ -1248,8 +1277,14 @@
     position: relative;
     padding-left: 40px;
     margin-left: 30px;
+    min-height: 130px;
     cursor: pointer;
 }
+
+    .feed-post-type-intro,
+    .feed-post-type-weekly_digest {
+        min-height: 20px;
+    }
 
     .feed-post a {
         z-index: 1;
@@ -1298,6 +1333,12 @@
         border: solid 3px var(--block-bg-color);
         text-align: left;
         z-index: 1;
+    }
+
+    .feed-post-author .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .feed-post-image {
@@ -1840,6 +1881,11 @@
 
     .comment-type-battle {}
 
+        .comment-type-battle .comment-header .user-avatar {
+            width: 20px;
+            height: 20px;
+        }
+
         .comment-type-battle .comment-body {
             padding-left: 0;
             padding-top: 20px;
@@ -1957,7 +2003,7 @@
     }
 
 .comment-is-new {
-    background-color: rgba(104, 118, 128, 0.15);
+    background-color: rgba(104, 118, 128, 0.30);
 }
 
 .user-telegram-auth-data {
