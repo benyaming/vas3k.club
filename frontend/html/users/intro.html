@@ -192,29 +192,29 @@
             </div>
 
             <div class="form-row">
-                <div class="user-edit-digest">
-                    <div class="user-edit-digest-item">
+                <div class="big-radio">
+                    <div class="big-radio-item">
                         {{ form.email_digest_type.1.tag }}
-                        <label for="{{ form.email_digest_type.1.id_for_label }}" class="user-edit-digest-label">
+                        <label for="{{ form.email_digest_type.1.id_for_label }}" class="big-radio-label">
                             <i class="fas fa-envelope-open"></i>
-                            <span class="user-edit-digest-name">Ежедневные<br> обновления + журнал</span>
-                            <span class="user-edit-digest-description">Шлите мне всё!</span>
+                            <span class="big-radio-title">Ежедневные<br> обновления + журнал</span>
+                            <span class="big-radio-description">Шлите мне всё!</span>
                         </label>
                     </div>
-                    <div class="user-edit-digest-item">
+                    <div class="big-radio-item">
                         {{ form.email_digest_type.2.tag }}
-                        <label for="{{ form.email_digest_type.2.id_for_label }}" class="user-edit-digest-label">
+                        <label for="{{ form.email_digest_type.2.id_for_label }}" class="big-radio-label">
                             <i class="fas fa-calendar-week"></i>
-                            <span class="user-edit-digest-name">Журнал раз в неделю</span>
-                            <span class="user-edit-digest-description">Подборка отборного контента за неделю</span>
+                            <span class="big-radio-title">Журнал раз в неделю</span>
+                            <span class="big-radio-description">Подборка отборного контента за неделю</span>
                         </label>
                     </div>
-                    <div class="user-edit-digest-item">
+                    <div class="big-radio-item">
                         {{ form.email_digest_type.0.tag }}
-                        <label for="{{ form.email_digest_type.0.id_for_label }}" class="user-edit-digest-label">
+                        <label for="{{ form.email_digest_type.0.id_for_label }}" class="big-radio-label">
                             <i class="fab fa-telegram"></i>
-                            <span class="user-edit-digest-name">Онлайн в <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" rel="noreferrer" target="_blank">телеграме</a></span>
-                            <span class="user-edit-digest-description">Не хочу никаких писем, сам подпишусь</span>
+                            <span class="big-radio-title">Онлайн в <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" rel="noreferrer" target="_blank">телеграме</a></span>
+                            <span class="big-radio-description">Не хочу никаких писем, сам подпишусь</span>
                         </label>
                     </div>
                 </div>
@@ -242,19 +242,19 @@
                     <a href="{{ settings.TELEGRAM_CLUB_CHAT_URL }}" rel="noreferrer" target="_blank" class="network-channel">
                         <span class="avatar network-channel-icon" style="background-image: url('https://i.vas3k.club/b8c8cc57c58470a1ea7633b53e5f8014a7d9ad638169c440a3cfc6ff6a89da59.jpg');"></span>
                         <span class="network-channel-name text-120">Вастрик.Бар</span>
-                        <span class="network-channel-description">Главный чат Клуба, но там бывает шумно</span>
+                        <span class="network-channel-description">Главный чат Клуба (там бывает шумно)</span>
                     </a>
 
                     <a href="{% url "network" %}" target="_blank" class="network-channel">
                         <span class="avatar network-channel-icon" style="background-image: url('https://i.vas3k.club/9c66fb5f09d7700cc117e535f8436d006dbf757e78e16255830366379bd09a1f.jpg');"></span>
-                        <span class="network-channel-name text-120">Секретные Чаты</span>
+                        <span class="network-channel-name text-120">Другие секретные чаты</span>
                     </a>
                 </div>
             </div>
 
             <div class="clearfix50"></div>
 
-            <div class="block-header">🤖<br>Познакомьтесь с телеграм-ботом</div>
+            <div class="block-header">🤖<br>Познакомьтесь с ботом</div>
 
             <div class="block-description">
                 <p>

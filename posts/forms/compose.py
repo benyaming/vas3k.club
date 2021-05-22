@@ -17,15 +17,11 @@ class PostForm(forms.ModelForm):
         empty_label="Для всех",
         queryset=Topic.objects.filter(is_visible=True).all(),
     )
-    is_public = forms.BooleanField(
+    is_public = forms.ChoiceField(
         label="Виден ли в большой интернет?",
-        initial=False,
-        required=False
-    )
-    is_visible = forms.BooleanField(
-        label="Виден ли пост вообще?",
-        initial=False,
-        required=False
+        choices=((True, "Публичный пост"), (False, "Только для своих")),
+        widget=forms.RadioSelect,
+        required=True
     )
 
     class Meta:
@@ -63,7 +59,7 @@ class PostTextForm(PostForm):
 
     class Meta:
         model = Post
-        fields = ["title", "text", "topic", "is_visible", "is_public"]
+        fields = ["title", "text", "topic", "is_public"]
 
 
 class PostLinkForm(PostForm):
@@ -103,7 +99,6 @@ class PostLinkForm(PostForm):
             "text",
             "url",
             "topic",
-            "is_visible",
             "is_public"
         ]
 
@@ -148,7 +143,6 @@ class PostQuestionForm(PostForm):
             "title",
             "text",
             "topic",
-            "is_visible",
             "is_public"
         ]
 
@@ -180,7 +174,6 @@ class PostIdeaForm(PostForm):
             "title",
             "text",
             "topic",
-            "is_visible",
             "is_public"
         ]
 
@@ -269,7 +262,6 @@ class PostEventForm(PostForm):
             "title",
             "text",
             "topic",
-            "is_visible",
             "is_public"
         ]
 
@@ -369,7 +361,6 @@ class PostProjectForm(PostForm):
             "topic",
             "url",
             "image",
-            "is_visible",
             "is_public"
         ]
 
@@ -416,7 +407,6 @@ class PostBattleForm(PostForm):
         fields = [
             "text",
             "topic",
-            "is_visible",
             "is_public"
         ]
 

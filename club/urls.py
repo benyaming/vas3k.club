@@ -13,6 +13,7 @@ from landing.views import landing, docs, god_settings
 from misc.views import achievements, network, robots, generate_ical_invite, generate_google_invite
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch, \
     link_telegram
+from notifications.webhooks import webhook_event
 from payments.views import membership_expired, pay, done, stripe_webhook, stop_subscription
 from posts.api import md_show_post, api_show_post
 from posts.models.post import Post
@@ -22,13 +23,14 @@ from posts.views.admin import admin_post, announce_post
 from posts.views.api import toggle_post_bookmark
 from posts.views.feed import feed
 from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vote, compose, compose_type, \
-    toggle_post_subscription, delete_post
+    toggle_post_subscription, delete_post, unpublish_post, clear_post
 from bookmarks.views import bookmarks
 from search.views import search
 from users.api import api_profile
 from users.views.delete_account import request_delete_account, confirm_delete_account
+from users.views.friends import toggle_friend
 from users.views.messages import on_review, rejected, banned
-from users.views.profile import profile, toggle_tag, add_expertise, delete_expertise
+from users.views.profile import profile, toggle_tag, add_expertise, delete_expertise, profile_comments, profile_posts
 from users.views.settings import profile_settings, edit_profile, edit_account, edit_notifications, edit_payments, \
     edit_bot, edit_data, request_data
 from users.views.intro import intro
@@ -58,6 +60,9 @@ urlpatterns = [
 
     path("user/<slug:user_slug>/", profile, name="profile"),
     path("user/<slug:user_slug>.json", api_profile, name="api_profile"),
+    path("user/<slug:user_slug>/comments/", profile_comments, name="profile_comments"),
+    path("user/<slug:user_slug>/posts/", profile_posts, name="profile_posts"),
+    path("user/<slug:user_slug>/friend/", toggle_friend, name="toggle_friend"),
     path("user/<slug:user_slug>/edit/", profile_settings, name="profile_settings"),
     path("user/<slug:user_slug>/edit/profile/", edit_profile, name="edit_profile"),
     path("user/<slug:user_slug>/edit/account/", edit_account, name="edit_account"),
@@ -82,6 +87,8 @@ urlpatterns = [
 
     path("create/", compose, name="compose"),
     path("create/<slug:post_type>/", compose_type, name="compose_type"),
+    path("post/<slug:post_slug>/unpublish/", unpublish_post, name="unpublish_post"),
+    path("post/<slug:post_slug>/clear/", clear_post, name="clear_post"),
     path("post/<slug:post_slug>/delete/", delete_post, name="delete_post"),
     path("post/<slug:post_slug>/edit/", edit_post, name="edit_post"),
     path("post/<slug:post_slug>/bookmark/", toggle_post_bookmark, name="toggle_post_bookmark"),
@@ -114,6 +121,7 @@ urlpatterns = [
          name="email_digest_switch"),
     path("notifications/renderer/digest/weekly/", weekly_digest, name="render_weekly_digest"),
     path("notifications/renderer/digest/daily/<slug:user_slug>/", daily_digest, name="render_daily_digest"),
+    path("notifications/webhook/<slug:event_type>", webhook_event, name="webhook_event"),
 
     path("docs/<slug:doc_slug>/", docs, name="docs"),
 
@@ -144,7 +152,6 @@ urlpatterns = [
 
 if settings.DEBUG:
     import debug_toolbar
-
     urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
 
 # According to django doc: https://docs.djangoproject.com/en/3.1/topics/testing/overview/#other-test-conditions
@@ -152,5 +159,4 @@ if settings.DEBUG:
 # so we use separate special var instead of settings.DEBUG
 if settings.TESTS_RUN:
     from debug.api import api_me
-
     urlpatterns.append(path("debug/me", api_me, name="debug_api_me"))

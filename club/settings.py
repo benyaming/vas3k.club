@@ -12,11 +12,15 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv("SECRET_KEY") or "wow so secret"
-DEBUG = (os.getenv("DEBUG") == "true")  # SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = (os.getenv("DEBUG") != "false")  # SECURITY WARNING: don't run with debug turned on in production!
 TESTS_RUN = True if os.getenv("TESTS_RUN") else False
 
 ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost", "0.0.0.0", "vas3k.club"]
 INTERNAL_IPS = ["127.0.0.1"]
+
+ADMINS = [
+    ("admin", "club@vas3k.club"),
+]
 
 INSTALLED_APPS = [
     "django.contrib.staticfiles",
@@ -33,6 +37,7 @@ INSTALLED_APPS = [
     "notifications.apps.NotificationsConfig",
     "search.apps.SearchConfig",
     "gdpr.apps.GdprConfig",
+    # "badges.apps.BadgesConfig",
     "simple_history",
     "django_q",
     "webpack_loader",
@@ -54,7 +59,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, "notifications/telegram/templates"),
             os.path.join(BASE_DIR, "frontend/html"),
         ],
-        "APP_DIRS": False,
+        "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -69,6 +74,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "club.wsgi.application"
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGGING = {
     "version": 1,
@@ -149,6 +155,16 @@ CACHES = {
 
 LANDING_CACHE_TIMEOUT = 60 * 60 * 24
 
+# Email
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "email-smtp.eu-central-1.amazonaws.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "Вастрик.Клуб <club@vas3k.club>"
+
 # App
 
 APP_HOST = os.environ.get("APP_HOST") or "http://127.0.0.1:8000"
@@ -165,6 +181,10 @@ AUTH_MAX_CODE_ATTEMPTS = 3
 DEFAULT_PAGE_SIZE = 70
 SEARCH_PAGE_SIZE = 25
 PEOPLE_PAGE_SIZE = 18
+PROFILE_COMMENTS_PAGE_SIZE = 100
+PROFILE_POSTS_PAGE_SIZE = 30
+
+COMMUNITY_APPROVE_UPVOTES = 35
 
 GDPR_ARCHIVE_STORAGE_PATH = os.getenv("GDPR_ARCHIVE_STORAGE_PATH") or os.path.join(BASE_DIR, "gdpr/downloads")
 GDPR_ARCHIVE_URL = "/downloads/"
@@ -203,10 +223,6 @@ c+Ha7cw3U+n6KI4idHLiwa0CAwEAAQ==
 JWT_ALGORITHM = "RS256"
 JWT_EXP_TIMEDELTA = timedelta(days=120)
 
-MAILGUN_API_URI = "https://api.eu.mailgun.net/v3/mailgun.vas3k.club"
-MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
-MAILGUN_EMAIL_FROM = "Вастрик.Клуб <club@vas3k.club>"
-
 MEDIA_UPLOAD_URL = "https://i.vas3k.club/upload/multipart/"
 MEDIA_UPLOAD_CODE = os.getenv("MEDIA_UPLOAD_CODE")
 VIDEO_EXTENSIONS = {"mp4", "mov", "webm"}
@@ -231,8 +247,9 @@ STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET") or ""
 STRIPE_CANCEL_URL = APP_HOST + "/join/"
 STRIPE_SUCCESS_URL = APP_HOST + "/monies/done/?reference={CHECKOUT_SESSION_ID}"
 
-COMMENT_EDIT_TIMEDELTA = timedelta(hours=24)
-COMMENT_DELETE_TIMEDELTA = timedelta(days=10 * 365)
+COMMENT_EDITABLE_TIMEDELTA = timedelta(hours=24)
+COMMENT_DELETABLE_TIMEDELTA = timedelta(days=10 * 365)
+COMMENT_DELETABLE_BY_POST_AUTHOR_TIMEDELTA = timedelta(days=14)
 RETRACT_VOTE_IN_HOURS = 3
 RETRACT_VOTE_TIMEDELTA = timedelta(hours=RETRACT_VOTE_IN_HOURS)
 RATE_LIMIT_POSTS_PER_DAY = 10
@@ -240,6 +257,17 @@ RATE_LIMIT_COMMENTS_PER_DAY = 200
 
 POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)
 POST_HOTNESS_PERIOD = timedelta(days=5)
+
+MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10
+CLEARED_POST_TEXT = "```\n" \
+    "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
+    "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@vas3k.club." \
+    "\n```"
+
+MODERATOR_USERNAME = "moderator"
+DELETED_USERNAME = "deleted"
+
+WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 
 WEBPACK_LOADER = {
     "DEFAULT": {
@@ -265,6 +293,6 @@ if SENTRY_DSN and not DEBUG:
         }
     }
 
-# if DEBUG:
-#     INSTALLED_APPS += ["debug_toolbar"]
-#     MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
+if DEBUG:
+    INSTALLED_APPS += ["debug_toolbar"]
+    MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE

@@ -1,5 +1,7 @@
 import logging
+from datetime import datetime
 
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -29,6 +31,8 @@ def create_comment(request, post_slug):
         ProperCommentForm = BattleCommentForm
     else:
         ProperCommentForm = CommentForm
+
+    comment_order = request.POST.get("post_comment_order", "created_at")
 
     if request.method == "POST":
         form = ProperCommentForm(request.POST)
@@ -62,7 +66,11 @@ def create_comment(request, post_slug):
             SearchIndex.update_comment_index(comment)
             LinkedPost.create_links_from_text(post, comment.text)
 
-            return redirect("show_comment", post.slug, comment.id)
+            # return redirect("show_comment", post.slug, comment.id)
+            return redirect(
+                reverse("show_post", kwargs={"post_type": post.type,
+                                             "post_slug": post.slug}) + f"?comment_order={comment_order}#comment-{comment.id}"
+            )
         else:
             log.error(f"Comment form error: {form.errors}")
             return render(request, "error.html", {
@@ -136,10 +144,11 @@ def delete_comment(request, comment_id):
                 message="Только автор комментария, поста или модератор может удалить комментарий"
             )
 
-        if not comment.is_deletable:
+        if not comment.is_deletable_by(request.me):
             raise AccessDenied(
                 title="Время вышло",
-                message="Комментарий можно удалить только в первые 3 дня после создания"
+                message="Комментарий можно удалять только в первые дни после создания. "
+                        "Потом только автор или модератор может это сделать."
             )
 
         if not comment.post.is_visible:

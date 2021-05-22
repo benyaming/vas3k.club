@@ -25,8 +25,8 @@ def approve_post(update: Update, context: CallbackContext) -> None:
 
     post = Post.objects.get(id=post_id)
     if post.is_approved_by_moderator:
-        update.callback_query.answer()
         update.effective_chat.send_message(f"Пост «{post.title}» уже одобрен")
+        update.callback_query.edit_message_reply_markup(reply_markup=None)
         return
 
     post.is_approved_by_moderator = True
@@ -87,10 +87,10 @@ def unpublish_post(update: Update, context: CallbackContext) -> None:
     post = Post.objects.get(id=post_id)
     if not post.is_visible:
         update.effective_chat.send_message(f"Пост «{post.title}» уже перенесен в черновики")
+        update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
-    post.is_visible = False
-    post.save()
+    post.unpublish()
 
     SearchIndex.update_post_index(post)
 
@@ -113,10 +113,12 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
     user = User.objects.get(id=user_id)
     if user.moderation_status == User.MODERATION_STATUS_APPROVED:
         update.effective_chat.send_message(f"Пользователь «{user.full_name}» уже одобрен")
+        update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
     if user.moderation_status == User.MODERATION_STATUS_REJECTED:
         update.effective_chat.send_message(f"Пользователь «{user.full_name}» уже был отклонен")
+        update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
     user.moderation_status = User.MODERATION_STATUS_APPROVED
@@ -124,14 +126,18 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
     user.save()
 
     # make intro visible
-    Post.objects\
-        .filter(author=user, type=Post.TYPE_INTRO)\
-        .update(is_visible=True, published_at=datetime.utcnow(), is_approved_by_moderator=True)
+    intro = Post.objects.filter(author=user, type=Post.TYPE_INTRO).first()
+    intro.is_approved_by_moderator = True
+    intro.is_visible = True
+    if not intro.published_at:
+        intro.published_at = datetime.utcnow()
+    intro.save()
 
     SearchIndex.update_user_index(user)
 
     notify_user_profile_approved(user)
     send_welcome_drink(user)
+    announce_in_club_chats(intro)
 
     update.effective_chat.send_message(
         f"✅ Пользователь «{user.full_name}» одобрен ({update.effective_user.full_name})"
@@ -159,12 +165,14 @@ def reject_user_profile(update: Update, context: CallbackContext):
         update.effective_chat.send_message(
             f"Пользователь «{user.full_name}» уже был отклонен и пошел все переделывать"
         )
+        update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
     if user.moderation_status == User.MODERATION_STATUS_APPROVED:
         update.effective_chat.send_message(
             f"Пользователь «{user.full_name}» уже был принят, его нельзя реджектить"
         )
+        update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
     user.moderation_status = User.MODERATION_STATUS_REJECTED
